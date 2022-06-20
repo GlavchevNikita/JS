@@ -10,7 +10,7 @@ const div = document.getElementById('d')
     age.forEach(element => {
         if (element && !isNaN(element)){
             if (element < age_2) {
-                div.innerHTML += "You don't have access cause your age is" + element  + "It's less then" + '<br /r>'
+                div.innerHTML += "You don't have access cause your age is " + element  + " It's less then" + '<br /r>'
             } else if (element >= age_2 && element < age_3) {
                 div.innerHTML += "Welcome !" + '<br /r>'
             } else if (element > age_3) {
@@ -18,7 +18,7 @@ const div = document.getElementById('d')
             } else {
                 div.innerHTML += "Tecnical work" + '<br /r>'
         }
-    } else console.log('Not an integer value')  + '<br /r>' 
+    } else div.innerHTML += ('Not an integer value')  + '<br /r>' 
     })
  }    
     
