@@ -1,0 +1,372 @@
+{
+	"info": {
+		"_postman_id": "a5e7eb42-810c-49e6-aee0-2ff2ce9a1e18",
+		"name": "HW_3_t",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20975846"
+	},
+	"item": [
+		{
+			"name": "Task 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const respSalary = pm.response.json().salary\r",
+							"\r",
+							"const reqSalary = +pm.request.url.query.get('salary')\r",
+							"\r",
+							"respSalary.forEach((salary,index) => {\r",
+							"    pm.test(`${reqSalary} * ${index+1} === ${salary}`, () => {\r",
+							"        pm.expect(reqSalary*(index+1)).to.eql(+salary)\r",
+							"    })\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://162.55.220.72:5005/object_info_4?age={{age}}&name={{name}}&salary={{salary}}",
+					"protocol": "http",
+					"host": [
+						"162",
+						"55",
+						"220",
+						"72"
+					],
+					"port": "5005",
+					"path": [
+						"object_info_4"
+					],
+					"query": [
+						{
+							"key": "age",
+							"value": "{{age}}"
+						},
+						{
+							"key": "name",
+							"value": "{{name}}"
+						},
+						{
+							"key": "salary",
+							"value": "{{salary}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Task 3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const reqObject = pm.request.url.query.toObject()\r",
+							"const respObject = {\r",
+							"    age: String (pm.response.json().age),\r",
+							"    name: pm.response.json().name,\r",
+							"    salary: String(pm.response.json().salary)\r",
+							"}\r",
+							"pm.test('Compare request request object and responce object', () => {\r",
+							"    pm.expect(reqObject).to.deep.eql(respObject)\r",
+							"});\r",
+							"\r",
+							"// 2 variant\r",
+							"const jsonData = pm.response.json()\r",
+							"const resp = {};\r",
+							"for(const key in reqObject) {\r",
+							"    resp[key] = isNaN(jsonData[key]) ? jsonData[key] : + jsonData[key]\r",
+							"    reqObject[key] = isNaN(reqObject[key]) ? reqObject[key] : +reqObject[key]\r",
+							"}\r",
+							"\r",
+							"pm.test('2.0 Compare request request object and responce object', () => {\r",
+							"    pm.expect(reqObject).to.deep.eql(resp)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/object_info_3?name={{name}}&age={{age}}&salary={{salary}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"object_info_3"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{name}}"
+						},
+						{
+							"key": "age",
+							"value": "{{age}}"
+						},
+						{
+							"key": "salary",
+							"value": "{{salary}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Task 4",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const keyisInJson = [\"start_qa_salary\", \"qa_salary_after_6_months\", \"qa_salary_after_3.5_years\", \"qa_salary_after_12_months\",\"qa_salary_after_1.5_year\", \"person\"]\r",
+							"\r",
+							"let resp = pm.response.json()\r",
+							"\r",
+							"keyisInJson.forEach(key => {\r",
+							"    pm.test(`Responce has ${key}`, () => {\r",
+							"        pm.expect(resp).to.have.property(key)\r",
+							"    })\r",
+							"})\r",
+							"\r",
+							"// 4.2\r",
+							"const salary = pm.environment.get('salary')\r",
+							"const counters = {\r",
+							"    'start_qa_salary': 1,\r",
+							"    'qa_salary_after_6_months': 2,\r",
+							"    'qa_salary_after_3.5_years' : 3.8,\r",
+							"    'qa_salary_after_12_months' : 2.7,\r",
+							"    'qa_salary_after_1.5_year' : 3.3\r",
+							"\r",
+							"}\r",
+							"\r",
+							"for(const key in counters){\r",
+							"    pm.test(`${key} from response = salary from request * ${counters[key]}` , () => {\r",
+							"        pm.expect(+resp[key]).to.eql(salary* counters[key])\r",
+							"    })\r",
+							"}\r",
+							"\r",
+							"\r",
+							"// 4.3\r",
+							"\r",
+							"counters['person'] = ''\r",
+							"\r",
+							"for(const key in counters){\r",
+							"    pm.test(`Response has has ${key}`, () => {\r",
+							"        pm.expect(resp).to.have.property(key)\r",
+							"    })\r",
+							"    if(key != 'person'){\r",
+							"        pm.test(`${key} from response = salary from request * ${counters[key]}` , () => {\r",
+							"        pm.expect(+resp[key]).to.eql(salary* counters[key])\r",
+							"    })\r",
+							"    }\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "{{name}}",
+							"type": "text"
+						},
+						{
+							"key": "age",
+							"value": "{{age}}",
+							"type": "text"
+						},
+						{
+							"key": "salary",
+							"value": "{{salary}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://162.55.220.72:5005/user_info_2",
+					"protocol": "http",
+					"host": [
+						"162",
+						"55",
+						"220",
+						"72"
+					],
+					"port": "5005",
+					"path": [
+						"user_info_2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Task 1****",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const age = pm.iterationData.get('age');\r",
+							"const name = pm.iterationData.get('name');\r",
+							"const salary = pm.iterationData.get('salary');\r",
+							"\r",
+							"function ageValidation(value){\r",
+							"    return value && !isNaN(value) && value>17 && value<121 && Number.isInteger(+value)\r",
+							"}\r",
+							"\r",
+							"function salaryValidation(value){\r",
+							"    return value && !isNaN(value) && value>0 && value<1000001 && Number.isInteger(+value)\r",
+							"}\r",
+							"\r",
+							"function nameValidation(value){\r",
+							"    return value && value.length > 2 && value.length<41 && value.trim() === value\r",
+							"}\r",
+							"\r",
+							"\r",
+							"function validate(name,age,salary){\r",
+							"    return ageValidation(age) && salaryValidation(salary) && nameValidation(name)\r",
+							"}\r",
+							"\r",
+							"if(validate(name,age,salary)) {\r",
+							"    pm.test(`200 code with age == ${age}, salary == ${salary} and name == ${name}`, () => {\r",
+							"        pm.response.to.have.status(200);\r",
+							"    })\r",
+							"} else {\r",
+							"    pm.test(`NOT 200 code with age == ${age}, salary == ${salary} and name == ${name}`, () => {\r",
+							"        pm.response.to.not.have.status(200)\r",
+							"    })\r",
+							"}\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"// Требования:\r",
+							"// 1) Name: 3-40 символов включительно, запрещены префиксные и постфиксные пробелы. Поле обязательное\r",
+							"// art\r",
+							"// aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\r",
+							"// арт\r",
+							"// ar\r",
+							"// aaaaaaaaaaaaaaaaaaaa\r",
+							"//aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\r",
+							"//_______aaa\r",
+							"//aa    aa\r",
+							"//aaaa____\r",
+							"//123\r",
+							"//!@#123\r",
+							"//ААфФф\r",
+							"//\r",
+							"//<b>name</b>\r",
+							"// <scrpit>alert('name')</script>\r",
+							"//!@#$%^&*()_+:{}<>?~\"\"\r",
+							"//null\r",
+							"//true\r",
+							"//infinity\r",
+							"//'30.01.2020'\r",
+							"//0\r",
+							"//________\r",
+							"//😔\r",
+							"//\r",
+							"\r",
+							"// 2) Age: только целые цифры в диапазоне 18-120 включительно. Поле обязательное\r",
+							"\r",
+							"//55\r",
+							"//18\r",
+							"//120\r",
+							"//0\r",
+							"//17\r",
+							"//121\r",
+							"//\r",
+							"//___\r",
+							"//!@#\r",
+							"// <scrpit>alert('name')</script>\r",
+							"//!@#$%^&*()_+:{}<>?~\"\"\r",
+							"//null\r",
+							"//true\r",
+							"//false\r",
+							"//'30.01.2020'\r",
+							"//18.1\r",
+							"//😔\r",
+							"//'55 2'\r",
+							"//-18\r",
+							"//'twenty'\r",
+							"//'18'\r",
+							"//22+5\r",
+							"//NaN\r",
+							"//undefiend\r",
+							"//11,1\r",
+							"//8*0\r",
+							"//34q\r",
+							"//1e1\r",
+							"// 55 _\r",
+							"//55!\r",
+							"\r",
+							"\r",
+							"// 3) Salary: только целые цифры в диапазоне 1-1000000 включительно. Поле обязательное"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "{{name}}",
+							"type": "text"
+						},
+						{
+							"key": "age",
+							"value": "{{age}}",
+							"type": "text"
+						},
+						{
+							"key": "salary",
+							"value": "{{salary}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://162.55.220.72:5005/user_info_2",
+					"protocol": "http",
+					"host": [
+						"162",
+						"55",
+						"220",
+						"72"
+					],
+					"port": "5005",
+					"path": [
+						"user_info_2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
